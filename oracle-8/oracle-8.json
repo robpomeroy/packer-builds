@@ -1,0 +1,112 @@
+{
+    "variables": {
+        "vm_name": "oracle-8",
+        "domain": "local",
+        "ssh_username": "ansible",
+        "ssh_password": "changeThisPassword",
+        "cpus": "2",
+        "memory": "2048",
+        "disk_size": "40960",
+        "iso_url": "file://C:/path/to/ISOs/OracleLinux-R8-U3-x86_64-dvd.iso",
+        "iso_checksum": "sha1:c602b93554806907d43f03d9068635cef10d332b",
+        "output_directory": "T:/packer-builds",
+        
+        "###~~~NOTE_001~~~###": "The below values are just for the Hyper-V builder.",
+        "switch_name": "NAT-Switch",
+
+        "###~~~NOTE_002~~~###": "The below values are just for the VMware builder.",
+        "host": "192.168.101.7",
+        "remote_datastore": "datastore1",
+        "remote_username": "root",
+        "remote_password": "INSERT-PASSWORD",
+        "guest_os_type" : "oraclelinux-64"
+    },
+
+    "builders": [
+        {
+            "type": "hyperv-iso",
+            "boot_command": [
+                "<esc><esc><esc>clinuxefi /images/pxeboot/vmlinuz ",
+                "inst.stage2=hd:LABEL=OL-8-3-0-BaseOS-x86_64 quiet ",
+                "text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>",
+                "initrdefi /images/pxeboot/initrd.img<enter>",
+                "boot<enter>"
+            ],
+            "boot_wait": "3s",
+
+            "vm_name": "{{user `vm_name`}}",
+            "iso_url": "{{user `iso_url`}}",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ssh_password": "{{user `ssh_password`}}",
+            "ssh_timeout": "20m",
+            "communicator": "ssh",
+        
+            "switch_name": "{{user `switch_name`}}",
+        
+            "disk_block_size": 32,
+            "disk_size": "{{user `disk_size`}}",
+            "memory": "{{user `memory`}}",
+            "enable_dynamic_memory": true,
+            "cpus": "{{user `cpus`}}",
+        
+            "headless": false,
+            "generation": 2,
+            "enable_secure_boot": true,
+            "secure_boot_template": "MicrosoftUEFICertificateAuthority",
+            "first_boot_device": "SCSI:0:1",
+
+            "http_directory": "http",
+            "shutdown_command": "echo '{{user `ssh_username`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `output_directory`}}/{{user `vm_name`}}"
+        },
+        {
+            "type": "vmware-iso",
+            "boot_command": [
+                "i<tab><wait>",
+                " inst.text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+            ],
+            "boot_wait": "3s",
+
+            "vm_name": "{{user `vm_name`}}",
+            "iso_url": "{{user `iso_url`}}",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ssh_password": "{{user `ssh_password`}}",
+            "ssh_timeout": "20m",
+            "communicator": "ssh",
+
+            "remote_type": "esx5",
+            "remote_host": "{{user `host`}}",
+            "remote_datastore": "{{user `remote_datastore`}}",
+            "remote_username": "{{user `remote_username`}}",
+            "remote_password": "{{user `remote_password`}}",
+            "vnc_disable_password": true,
+
+            "vmdk_name": "{{user `vm_name`}}",
+            "disk_type_id": "thin",
+            "disk_size": "{{user `disk_size`}}",
+
+            "memory": "{{user `memory`}}",
+            "cpus": "{{user `cpus`}}",
+
+            "guest_os_type" : "{{user `guest_os_type`}}",
+            "network_adapter_type": "vmxnet3",
+            "network_name": "VM Network",
+        
+            "http_directory": "http",
+            "shutdown_command": "echo '{{user `ssh_username`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `output_directory`}}/{{user `vm_name`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_username`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+            "scripts": [
+                "scripts/set_up_ssh.sh",
+                "scripts/clean_up.sh"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+#cloud-config
+# This creates a user "ansible" with a password "changeThisPassword",
+# and sets up passwordless sudo. Change the password and/or set up SSH
+# keys for logging in.
+autoinstall:
+  version: 1
+  locale: en_GB
+  keyboard:
+    layout: en
+    variant: gb
+  storage:
+    layout:
+      name: direct
+    config:
+      - type: disk
+        id: disk0
+        match:
+          size: largest
+      - type: partition
+        id: boot-partition
+        device: disk0
+        size: 500M
+      - type: partition
+        id: root-partition
+        device: disk0
+        size: -1
+  identity:
+    hostname: ubuntu-20_04
+    username: ansible
+	# One of the easiest ways to generate this password is to set a password on a
+	# working Linux installation, then copy the hash from /etc/shadow.
+    password: $6$pOT/rd6OIpKAQbvp$C3rL5bb7WXh9Os14DssJvScxhum2LTYSXmGkyn1Kl77gLLlIJR/4Unl87D.O.JhkuBC2rAK2rL8s09RVYuUxJ.
+  ssh:
+    allow-pw: true
+    install-server: yes
+    authorized-keys:
+      - ssh-rsa INSERT KEY HERE
+  packages:
+    - apt-transport-https
+    - linux-cloud-tools-common
+    - linux-cloud-tools-virtual
+    - linux-tools-virtual
+  user-data:
+    disable_root: false
+  late-commands:
+    # Not convinced this first command is needed
+    - 'sed -i "s/dhcp4: true/&\n      dhcp-identifier: mac/" /target/etc/netplan/00-installer-config.yaml'
+    - echo 'ansible ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ansible
+    - chmod 0440 /target/etc/sudoers.d/ansible
+ 

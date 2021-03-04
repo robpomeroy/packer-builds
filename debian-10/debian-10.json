@@ -1,0 +1,81 @@
+{
+    "variables": {
+        "vm_name": "debian-10",
+        "domain": "local",
+        "ssh_username": "ansible",
+        "ssh_password": "changeThisPassword",
+        "cpus": "2",
+        "memory": "2048",
+        "disk_size": "40960",
+        "switch_name": "NAT-Switch",
+        "iso_url": "file://C:/path/to/ISOs/debian-10.7.0-amd64-netinst.iso",
+        "iso_checksum": "sha1:505a1522daa30d77f4fa5acd4fa3d8c5e1a1cbb4",
+        "output_directory": "T:/packer-builds/debian-10"
+    },
+
+    "builders": [
+        {
+            "boot_command": [
+                "<wait>c<wait>",
+                "linux /install.amd/vmlinuz ",
+                "auto=true ",
+                "url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg ",
+                "hostname={{user `vm_name`}} ",
+                "domain={{user `domain`}} ",
+                "interface=auto ",
+                "vga=788 noprompt quiet --<enter>",
+                "initrd /install.amd/initrd.gz<enter>",
+                "boot<enter>"
+            ],
+            "boot_wait": "5s",
+
+            "vm_name": "{{user `vm_name`}}",
+            "type": "hyperv-iso",
+            "iso_url": "{{user `iso_url`}}",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ssh_password": "{{user `ssh_password`}}",
+            "ssh_timeout": "15m",
+            "communicator": "ssh",
+        
+            "switch_name": "{{user `switch_name`}}",
+        
+            "disk_block_size": 32,
+            "disk_size": "{{user `disk_size`}}",
+            "memory": "{{user `memory`}}",
+            "enable_dynamic_memory": true,
+            "cpus": "{{user `cpus`}}",
+        
+            "headless": false,
+            "generation": 2,
+            "enable_secure_boot": true,
+            "secure_boot_template": "MicrosoftUEFICertificateAuthority",
+            "first_boot_device": "SCSI:0:1",
+
+            "http_directory": "http",
+        
+            "shutdown_command": "echo '{{user `ssh_username`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `output_directory`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_username`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+            "inline": [
+              "apt -y update && apt -y upgrade"
+            ]
+      
+        },
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_username`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+            "scripts": ["scripts/set_up_ssh.sh"]
+        },
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `ssh_username`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+            "scripts": ["scripts/clean_up.sh"]
+        }        
+    ]
+}

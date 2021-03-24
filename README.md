@@ -3,7 +3,7 @@
 This repository contains various working Packer builds, based on hours of
 head scratching, trial and error and ultimately inexplicable success. As you
 have no doubt discovered, one of the fiddliest parts of a Packer build is
-working out what incantations are best for a `boot__command`. That may even
+working out what incantations are best for a `boot_command`. That may even
 be why you're here.
 
 I hope that my efforts will be of help to others (even though this repo may
@@ -21,7 +21,7 @@ VMware (free ESXi) builds.
 ## Credits
 
 As you may well have found, getting to a working build involves lots of
-internet searching and pieces together snippets of information. I
+internet searching and piecing together snippets of information. I
 couldn't possibly reconstruct the names of all those whose own work helped
 mine - but thank you all, anyway! In a similar way, please don't feel you
 need to credit me if anything here helps you.
@@ -29,3 +29,8 @@ need to credit me if anything here helps you.
 Happy Packing!
 
 - Rob
+
+[Twitter](https://twitter.com/robpomeroy) |
+[KeyBase](https://keybase.io/robpomeroy) |
+[LinkedIn](https://www.linkedin.com/in/robpomeroy/) | 
+[website](https://pomeroy.me/)

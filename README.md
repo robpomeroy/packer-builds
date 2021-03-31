@@ -12,11 +12,13 @@ me a pull request. There are doubtless many aspects that are less than
 optimal. Just don't ask me to change the localisation from en_GB. ;-)
 
 The builds are deliberately minimal, since I use Ansible to configure
-machines after provisioning. I only include virtualisation tools and Python,
-which is required for Ansible.
+machines after provisioning. For Linux, I only include virtualisation tools
+and Python, which is required for Ansible.
 
-The Oracle 8 build is probably the most complete - it offers Hyper-V and
-VMware (free ESXi) builds.
+The Oracle 8 and Ubuntu 20.04 plans are the most complete - they offer
+Hyper-V and VMware (free ESXi) builds.
+
+Plans should work with Packer 1.6 and above.
 
 ## Credits
 

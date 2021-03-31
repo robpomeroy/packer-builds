@@ -7,10 +7,19 @@
         "cpus": "2",
         "memory": "2048",
         "disk_size": "40960",
-        "switch_name": "NAT-Switch",
         "iso_url": "file://C:/path/to/ISOs/ubuntu-20.04.1-live-server-amd64.iso",
         "iso_checksum": "sha1:1c82f74495c4d9257c973fd031bc5ebde3d5b9a7",
-        "output_directory": "T:/packer-builds/ubuntu-20.04"
+        "output_directory": "T:/packer-builds",
+        
+        "###~~~NOTE_001~~~###": "The below values are just for the Hyper-V builder.",
+        "switch_name": "NAT-Switch",
+
+        "###~~~NOTE_002~~~###": "The below values are just for the VMware builder.",
+        "host": "192.168.101.7",
+        "remote_datastore": "datastore1",
+        "remote_username": "root",
+        "remote_password": "NUCr00t",
+        "guest_os_type" : "ubuntu-64"
     },
 
     "builders": [
@@ -53,7 +62,47 @@
             "http_directory": "http",
         
             "shutdown_command": "echo '{{user `ssh_username`}}' | sudo -S shutdown -P now",
-            "output_directory": "{{user `output_directory`}}"
+            "output_directory": "{{user `output_directory`}}/{{user `vm_name`}}"
+        },
+        {
+            "type": "vmware-iso",
+            "boot_command": [
+                "<enter><enter><f6><esc><wait> ",
+                "quiet autoinstall ",
+                "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+                "<enter><wait>"
+            ],
+            "boot_wait": "3s",
+
+            "vm_name": "{{user `vm_name`}}",
+            "iso_url": "{{user `iso_url`}}",
+            "iso_checksum": "{{user `iso_checksum`}}",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ssh_password": "{{user `ssh_password`}}",
+            "ssh_timeout": "30m",
+            "communicator": "ssh",
+
+            "remote_type": "esx5",
+            "remote_host": "{{user `host`}}",
+            "remote_datastore": "{{user `remote_datastore`}}",
+            "remote_username": "{{user `remote_username`}}",
+            "remote_password": "{{user `remote_password`}}",
+            "vnc_disable_password": true,
+
+            "vmdk_name": "{{user `vm_name`}}",
+            "disk_type_id": "thin",
+            "disk_size": "{{user `disk_size`}}",
+
+            "memory": "{{user `memory`}}",
+            "cpus": "{{user `cpus`}}",
+
+            "guest_os_type" : "{{user `guest_os_type`}}",
+            "network_adapter_type": "vmxnet3",
+            "network_name": "VM Network",
+        
+            "http_directory": "http",
+            "shutdown_command": "echo '{{user `ssh_username`}}' | sudo -S shutdown -P now",
+            "output_directory": "{{user `output_directory`}}/{{user `vm_name`}}"
         }
     ],
     "provisioners": [

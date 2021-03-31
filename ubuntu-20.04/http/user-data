@@ -42,9 +42,12 @@ autoinstall:
     - linux-tools-virtual
   user-data:
     disable_root: false
+  early-commands:
+    # Stop the installer's SSH service - otherwise Packer connects prematurely
+    - systemctl stop ssh
+    # An alternative is to register a firewall rule that blocks SSH
+    #- iptables -A INPUT -p tcp --dport 22 -j DROP
   late-commands:
-    # Not convinced this first command is needed
-    - 'sed -i "s/dhcp4: true/&\n      dhcp-identifier: mac/" /target/etc/netplan/00-installer-config.yaml'
     - echo 'ansible ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ansible
     - chmod 0440 /target/etc/sudoers.d/ansible
  

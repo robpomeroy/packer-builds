@@ -1,7 +1,21 @@
 # Ubuntu 20.04 Packer build for Hyper-V
 
-This is a working UEFI-based installation of Ubuntu 20.04, with a Hyper-V
-builder, resulting in a generation 2 virtual machine.
+Hyper-V and VMware ESXi (free/standalone) builds. The generated artefacts
+will be placed in the directory specified by the `output_directory`
+variable.
+
+## Hyper-V
+This is a UEFI installation. Note that Hyper-V builds require an elevated
+command prompt.
+
+## VMware
+This is a BIOS-based installation. The VMware builder cannot currently create a
+UEFI machine. This is why the `boot_command` stanza differs from Hyper-V's.
+
+Note that `remote_type` must be set to `esx5`, even when targeting ESXi 6+. At
+the time of writing, the vmware-iso builder cannot produce ESX 6 images. ESX 5
+images will work fine on ESX 6 however.
+
 
 ## Things to change
 

@@ -7,12 +7,12 @@
         "cpus": "2",
         "memory": "2048",
         "disk_size": "40960",
-        "iso_url": "file://C:/path/to/ISOs/OracleLinux-R8-U3-x86_64-dvd.iso",
-        "iso_checksum": "sha1:c602b93554806907d43f03d9068635cef10d332b",
+        "iso_url": "file://C:/path/to/ISOs/OracleLinux-R8-U4-x86_64-dvd.iso",
+        "iso_checksum": "sha1:4eee6e4887718b9291acc080756f8c0a228abe7a",
         "output_directory": "T:/packer-builds",
         
         "###~~~NOTE_001~~~###": "The below values are just for the Hyper-V builder.",
-        "switch_name": "NAT-Switch",
+        "switch_name": "Default Switch",
 
         "###~~~NOTE_002~~~###": "The below values are just for the VMware builder.",
         "host": "192.168.101.7",
@@ -27,8 +27,8 @@
             "type": "hyperv-iso",
             "boot_command": [
                 "<esc><esc><esc>clinuxefi /images/pxeboot/vmlinuz ",
-                "inst.stage2=hd:LABEL=OL-8-3-0-BaseOS-x86_64 quiet ",
-                "text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>",
+                "inst.stage2=hd:LABEL=OL-8-4-0-BaseOS-x86_64 quiet ",
+                "inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>",
                 "initrdefi /images/pxeboot/initrd.img<enter>",
                 "boot<enter>"
             ],

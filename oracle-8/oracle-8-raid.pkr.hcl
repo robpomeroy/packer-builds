@@ -1,7 +1,7 @@
 # Name
 variable "vm_name" {
   type    = string
-  default = "oracle-8"
+  default = "oracle-8-raid"
 }
 
 # Hyper-V variables
@@ -40,7 +40,7 @@ variable "iso_checksum" {
   default = "sha256:45939e85542c19dd519aaad7c4dbe84a6fcadfaca348245f92ae4472fc7f50ac"
 }
 variable "iso_url" {
-  type = string
+  type    = string
   default = "file://C:/path/to/ISOs/OracleLinux-R8-U5-x86_64-dvd.iso"
 }
 
@@ -77,7 +77,7 @@ variable "memory" {
 
 # The most likely things that will need tweaking in the source sections below
 # are the boot_command and the boot_wait period.
-source "hyperv-iso" "oraclelinux_8" {
+source "hyperv-iso" "oraclelinux_8_raid" {
   boot_command = [
     "<esc><esc><esc>clinuxefi /images/pxeboot/vmlinuz ",
     "inst.stage2=hd:LABEL=OL-8-5-0-BaseOS-x86_64 quiet ",
@@ -87,11 +87,12 @@ source "hyperv-iso" "oraclelinux_8" {
   boot_wait             = "3s"
   communicator          = "ssh"
   cpus                  = "${var.cpus}"
+  disk_additional_size  = ["${var.disk_size}"]
   disk_block_size       = 32
   disk_size             = "${var.disk_size}"
   enable_dynamic_memory = true
   enable_secure_boot    = true
-  first_boot_device     = "SCSI:0:1"
+  first_boot_device     = "SCSI:0:2"
   generation            = 2
   headless              = false
   http_directory        = "http"
@@ -108,15 +109,16 @@ source "hyperv-iso" "oraclelinux_8" {
   vm_name               = "${var.vm_name}"
 }
 
-source "vmware-iso" "oraclelinux_8" {
+source "vmware-iso" "oraclelinux_8_raid" {
   boot_command = [
     "i<tab><wait> ",
     "inst.text ",
-    "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+    "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks-raid.cfg<enter>"
   ]
   boot_wait            = "3s"
   communicator         = "ssh"
   cpus                 = "${var.cpus}"
+  disk_additional_size = ["${var.disk_size}"]
   disk_size            = "${var.disk_size}"
   disk_type_id         = "thin"
   guest_os_type        = "${var.guest_os_type}"
@@ -144,8 +146,8 @@ source "vmware-iso" "oraclelinux_8" {
 build {
   name = "oraclelinux-8"
   sources = [
-    "source.hyperv-iso.oraclelinux_8",
-    "source.vmware-iso.oraclelinux_8"
+    "source.hyperv-iso.oraclelinux_8_raid",
+    "source.vmware-iso.oraclelinux_8_raid"
   ]
 
   provisioner "shell" {

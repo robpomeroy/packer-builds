@@ -7,6 +7,12 @@ documentation.
 The generated artefacts will be placed in the directory specified by the
 `output_directory` variable.
 
+## RAID or non-RAID
+
+`oracle-8.pkr.hcl` produces a non-RAID, single-disk build, with automatic
+partitioning. `oracle-8-raid.pkr.hcl` produces a two-disk RAID 1 build, with
+four custom partitions. Refer to the `ks-raid.cfg` file for details.
+
 ## Hyper-V
 This is a UEFI installation. Note that Hyper-V builds require an elevated
 command prompt.
@@ -21,7 +27,7 @@ images will work fine on ESX 6 however.
 
 ## Things to change
 
-In `oracle-8.pkr.hcl`:
+In `oracle-8[-raid].pkr.hcl`:
 
 - Edit everything in the `variables` key to fit your environment and
   requirements.
@@ -31,13 +37,13 @@ In `oracle-8.pkr.hcl`:
 - You may need to change the `boot_wait` value if you find your build misses
   the boot command.
 
-In `http\ks.cfg`:
+In `http\ks[-raid].cfg`:
 
 - Change the initial user if you wish. I use 'ansible' since my next step
   is always to run an Ansible playbook.
 - Change the password - see notes in the file for one possible method.
 
-The username and password *must* match the settings in `oracle-8.pkr.hcl`,
+The username and password *must* match the settings in `oracle-8[-raid].pkr.hcl`,
 otherwise Packer won't be able to log in and run provisioners.
 
 In `scripts\set_up_ssh.sh`:
@@ -46,4 +52,4 @@ In `scripts\set_up_ssh.sh`:
 - Insert your public SSH key.
 
 Alternatively, if you don't use SSH keys to log in, just delete the
-line from the provisioner in `oracle-8.pkr.hcl`.
+line from the provisioner in `oracle-8[-raid].pkr.hcl`.

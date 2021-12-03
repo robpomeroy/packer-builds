@@ -18,7 +18,17 @@ and Python, which is required for Ansible.
 The Oracle 8 and Ubuntu 20.04 plans are the most complete - they offer
 Hyper-V and VMware (free ESXi) builds.
 
-Plans should work with Packer 1.6 and above.
+Plans should work with Packer 1.7 and above.
+
+## PowerShell script
+
+The top-level directory of this repo contains a rough-and-ready PowerShell
+script (`New-PackerVM.ps1`) intended to import a Packer build into Hyper-V (as a
+new virtual machine). The script contains no error-checking and may not work in
+your environment. But hopefully it will at least provide pointers to the
+PowerShell incantations required to import a Packer build into Hyper-V.
+
+VMware importing is left as an exercise for the user. ;-)
 
 ## Credits
 

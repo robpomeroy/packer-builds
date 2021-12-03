@@ -1,0 +1,4 @@
+# Packer artifacts to ignore
+packer_cache/
+crash.log
+*.box

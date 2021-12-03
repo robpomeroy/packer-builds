@@ -13,8 +13,7 @@ variable "iso_checksum" {
 }
 variable "iso_url" {
   type    = string
-  #default = "file://C:/path/to/ISOs/CentOS-8.5.2111-x86_64-dvd1.iso"
-  default = "T:/ISOs/CentOS-8.5.2111-x86_64-dvd1.iso"
+  default = "file://C:/path/to/ISOs/CentOS-8.5.2111-x86_64-dvd1.iso"
 }
 
 # Tell Packer where to store the build artifacts
